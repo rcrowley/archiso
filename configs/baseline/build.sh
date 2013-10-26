@@ -44,7 +44,7 @@ make_setup_mkinitcpio() {
 
 # Customize installation (root-image)
 make_customize_root_image() {
-    cp -af ${script_path}/root-image ${work_dir}/${arch}
+    cp -af ${script_path}/root-image ${work_dir}
 }
 
 # Prepare ${install_dir}/boot/
