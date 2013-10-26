@@ -10,6 +10,7 @@ arch=$(uname -m)
 work_dir=work
 out_dir=out
 
+pacman_conf=${work_dir}/pacman.conf
 script_path=$(readlink -f ${0%/*})
 
 # Helper function to run make_*() only one time per architecture.
@@ -20,9 +21,17 @@ run_once() {
     fi
 }
 
+# Setup custom pacman.conf with current cache directories.
+make_pacman_conf() {
+    local _cache_dirs
+    _cache_dirs=($(pacman -v 2>&1 | grep '^Cache Dirs:' | sed 's/Cache Dirs:\s*//g'))
+    sed -r "s|^#?\\s*CacheDir.+|CacheDir = $(echo -n ${_cache_dirs[@]})|g" ${script_path}/../releng/pacman.conf > ${pacman_conf}
+}
+
 # Base installation (root-image)
 make_basefs() {
     mkarchiso -v -w "${work_dir}" -D "${install_dir}" init
+    mkarchiso -v -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" -p "mkinitcpio-nfs-utils" install
 }
 
 # Copy mkinitcpio archiso hooks and build initramfs (root-image)
@@ -76,6 +85,7 @@ make_iso() {
     mkarchiso -v -w "${work_dir}" -D "${install_dir}" -L "${iso_label}" -o "${out_dir}" iso "${iso_name}-${iso_version}-${arch}.iso"
 }
 
+run_once make_pacman_conf
 run_once make_basefs
 run_once make_setup_mkinitcpio
 run_once make_boot
