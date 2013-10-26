@@ -42,6 +42,11 @@ make_setup_mkinitcpio() {
     mkarchiso -v -w "${work_dir}" -D "${install_dir}" -r 'mkinitcpio -c /etc/mkinitcpio-archiso.conf -k /boot/vmlinuz-linux -g /boot/archiso.img' run
 }
 
+# Customize installation (root-image)
+make_customize_root_image() {
+    cp -af ${script_path}/root-image ${work_dir}/${arch}
+}
+
 # Prepare ${install_dir}/boot/
 make_boot() {
     mkdir -p ${work_dir}/iso/${install_dir}/boot/${arch}
@@ -88,6 +93,7 @@ make_iso() {
 run_once make_pacman_conf
 run_once make_basefs
 run_once make_setup_mkinitcpio
+run_once make_customize_root_image
 run_once make_boot
 run_once make_syslinux
 run_once make_isolinux
