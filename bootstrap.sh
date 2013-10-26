@@ -1,17 +1,26 @@
 set -e -x
 
-# Install dependencies for archiso/configs/baseline.
-pacman -S --needed --noconfirm "arch-install-scripts" "git" "make" "mkinitcpio-nfs-utils" "squashfs-tools"
-# pacman -S --needed --noconfigm "dosfstools" "lynx" # These are necessary for the configs/releng.
+# Find the absolute pathname of the directory with this bootstrap.sh.
+DIRNAME="$(cd "$(dirname "$0")" && pwd)"
 
-# Clone and install bleeding-edge archiso from Git.
-if [ "$(basename "$(pwd)")" = "archiso" ]
-then cd ".."
+# Clone archiso if we're not ourselves in a clone.
+if [ "$(basename "$DIRNAME")" != "archiso" -a ! -d ".git" ]
+then
+    if [ ! -d "archiso" ]
+    then
+        pacman -S --needed --noconfirm "git"
+        git clone "git://projects.archlinux.org/archiso.git"
+    fi
+    exec sh "archiso/bootstrap.sh"
 fi
-if [ ! -d "archiso" ]
-then git clone "git://projects.archlinux.org/archiso.git"
-fi
-make -C"archiso" install
+cd "$DIRNAME"
+
+# Install dependencies for archiso/configs/baseline.
+pacman -S --needed --noconfirm "arch-install-scripts" "make" "mkinitcpio-nfs-utils" "rsync" "squashfs-tools"
+# pacman -S --needed --noconfigm "dosfstools" "lynx" # Required by configs/releng.
+
+# Install this archiso.
+make install
 
 # Configure archiso/configs/baseline to PXE boot and download its root
 # filesystem via HTTP.
@@ -22,7 +31,10 @@ cp "/usr/lib/initcpio/install/archiso_pxe_common" "work/root-image/usr/lib/initc
 cp "/usr/lib/initcpio/install/archiso_pxe_http" "work/root-image/usr/lib/initcpio/install"
 
 # Build archiso and, by side-effect, the PXE tree.
-archiso/configs/baseline/build.sh -v
+configs/baseline/build.sh -v
 
 # Upload the PXE tree.
-scp -r "work/iso/arch" "rcrowley.org":"var/www/arch"
+if [ ! -L "work/iso/arch/arch" ]
+then ln -s "." "work/iso/arch/arch"
+fi
+rsync -avz "work/iso/arch" "rcrowley.org":"var/www/"

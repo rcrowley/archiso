@@ -1,2 +1,5 @@
 *~
+*.swp
 archiso-*.tar.gz*
+out
+work
