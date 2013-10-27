@@ -13,10 +13,11 @@ then
     fi
     exec sh "archiso/bootstrap.sh"
 fi
-cd "$DIRNAME"
 
-# Remove temporary files from last time, if any.
-rm -rf "out" "work"
+# Remove temporary files on exit.
+TMP="$(mktemp -d --tmpdir="$PWD")"
+trap "rm -rf \"$TMP\"" EXIT INT QUIT TERM
+cd "$TMP"
 
 # Install dependencies for archiso/configs/baseline.
 pacman -S --needed --noconfirm "arch-install-scripts" "make" "mkinitcpio-nfs-utils" "rsync" "squashfs-tools"
