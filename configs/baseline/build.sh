@@ -31,7 +31,7 @@ make_pacman_conf() {
 # Base installation (root-image)
 make_basefs() {
     mkarchiso -v -w "${work_dir}" -D "${install_dir}" init
-    mkarchiso -v -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" -p "mkinitcpio-nfs-utils" install
+    mkarchiso -v -w "${work_dir}" -C "${pacman_conf}" -D "${install_dir}" -p "arch-install-scripts gptfdisk mkinitcpio-nfs-utils rng-tools" install
 }
 
 # Copy mkinitcpio archiso hooks and build initramfs (root-image)

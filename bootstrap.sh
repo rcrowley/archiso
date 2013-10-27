@@ -15,12 +15,15 @@ then
 fi
 cd "$DIRNAME"
 
+# Remove temporary files from last time, if any.
+rm -rf "out" "work"
+
 # Install dependencies for archiso/configs/baseline.
 pacman -S --needed --noconfirm "arch-install-scripts" "make" "mkinitcpio-nfs-utils" "rsync" "squashfs-tools"
-# pacman -S --needed --noconfigm "dosfstools" "lynx" # Required by configs/releng.
+# pacman -S --needed --noconfirm "dosfstools" "lynx" # Required by configs/releng.
 
 # Install this archiso.
-make install
+make -C"$DIRNAME" install
 
 # Configure archiso/configs/baseline to PXE boot and download its root
 # filesystem via HTTP.
@@ -31,7 +34,7 @@ cp "/usr/lib/initcpio/install/archiso_pxe_common" "work/root-image/usr/lib/initc
 cp "/usr/lib/initcpio/install/archiso_pxe_http" "work/root-image/usr/lib/initcpio/install"
 
 # Build archiso and, by side-effect, the PXE tree.
-configs/baseline/build.sh -v
+sh "$DIRNAME/configs/baseline/build.sh" -v
 
 # Upload the PXE tree.
 if [ ! -L "work/iso/arch/arch" ]
