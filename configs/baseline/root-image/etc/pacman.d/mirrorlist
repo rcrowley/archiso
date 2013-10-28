@@ -1,2 +1,0 @@
-Server = http://ftp.osuosl.org/pub/archlinux/$repo/os/$arch
-Server = http://mirrors.kernel.org/archlinux/$repo/os/$arch
