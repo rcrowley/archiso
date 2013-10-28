@@ -1,0 +1,8 @@
+[Unit]
+Description=Arch Install
+
+[Service]
+ExecStart=/usr/local/bin/arch-install
+
+[Install]
+WantedBy=multi-user.target
