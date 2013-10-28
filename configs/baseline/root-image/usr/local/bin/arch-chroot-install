@@ -16,7 +16,7 @@ mkinitcpio -p"linux"
 
 echo "root:password" | chpasswd
 
-pacman -S --needed --noconfirm "openssh" "syslinux"
+pacman -S --needed --noconfirm "gptfdisk" "openssh" "syslinux"
 
 syslinux-install_update -a -i -m
 cat >"/boot/syslinux/syslinux.cfg" <<EOF
