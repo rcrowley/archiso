@@ -3,7 +3,7 @@
 set -e -x
 
 echo "localhost" >"/etc/hostname"
-ln -s "/usr/share/zoneinfo/UTC" "/etc/localtime"
+ln -fs "/usr/share/zoneinfo/UTC" "/etc/localtime"
 
 sed -i "s/#en_US.UTF-8/en_US.UTF-8/" "/etc/locale.gen"
 cat >"/etc/locale.conf" <<EOF
