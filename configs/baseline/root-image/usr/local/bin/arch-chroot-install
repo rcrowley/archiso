@@ -18,7 +18,7 @@ echo "root:password" | chpasswd
 
 pacman -S --needed --noconfirm "openssh" "syslinux"
 
-syslinux-install_update -a -i -m || :
+syslinux-install_update -a -i -m
 cat >"/boot/syslinux/syslinux.cfg" <<EOF
 DEFAULT arch
 PROMPT 0
